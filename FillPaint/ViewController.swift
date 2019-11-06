@@ -17,7 +17,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        imageview.image = UIImage(named: "Wall2.jpg")
+//        imageview.image = UIImage(named: "Wall2.jpg")
         image = imageview.image
     }
 
