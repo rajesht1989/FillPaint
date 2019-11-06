@@ -15,34 +15,22 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="real_house.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="T2P-Gs-aSf">
-                                <rect key="frame" x="10" y="54" width="394" height="523"/>
+                            <imageView clipsSubviews="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" image="house.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="T2P-Gs-aSf">
+                                <rect key="frame" x="10" y="54" width="394" height="738"/>
                                 <gestureRecognizers/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="T2P-Gs-aSf" secondAttribute="height" multiplier="302:401" id="pCe-on-Uop"/>
-                                </constraints>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="tSQ-QE-jHf" appends="YES" id="c1m-ZC-GHQ"/>
                                 </connections>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LRX-Rt-03D">
-                                <rect key="frame" x="81" y="659.5" width="252" height="30"/>
+                                <rect key="frame" x="81" y="941.5" width="252" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="Aau-1v-2eW"/>
                                 </constraints>
-                                <state key="normal" title="Choose"/>
-                                <connections>
-                                    <action selector="btnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="RO6-Bp-2uX"/>
-                                </connections>
+                                <state key="normal" title="Choose tolerance"/>
                             </button>
-                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="sOG-KT-fO1">
-                                <rect key="frame" x="29" y="621" width="97" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="100" minValue="0.0" maxValue="20000" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fLA-IO-UeZ">
-                                <rect key="frame" x="28" y="699.5" width="358" height="31"/>
+                                <rect key="frame" x="28" y="812" width="358" height="31"/>
                                 <connections>
                                     <action selector="toleranceValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="2Vl-vn-0HS"/>
                                 </connections>
@@ -50,11 +38,12 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="LRX-Rt-03D" firstAttribute="top" secondItem="T2P-Gs-aSf" secondAttribute="bottom" constant="82.5" id="DGx-dr-K0l"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="fLA-IO-UeZ" secondAttribute="bottom" constant="20" id="E0s-tr-cIG"/>
+                            <constraint firstItem="fLA-IO-UeZ" firstAttribute="top" secondItem="T2P-Gs-aSf" secondAttribute="bottom" constant="20" id="IG3-hk-dWM"/>
                             <constraint firstItem="LRX-Rt-03D" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="81" id="Iqv-X4-Zmx"/>
                             <constraint firstItem="T2P-Gs-aSf" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="PdE-jx-lvP"/>
                             <constraint firstItem="fLA-IO-UeZ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="30" id="SMS-OE-amx"/>
-                            <constraint firstItem="fLA-IO-UeZ" firstAttribute="top" secondItem="LRX-Rt-03D" secondAttribute="bottom" constant="10" id="YIa-E4-3Qq"/>
+                            <constraint firstItem="LRX-Rt-03D" firstAttribute="top" secondItem="fLA-IO-UeZ" secondAttribute="bottom" constant="99.5" id="aR5-TZ-nTn"/>
                             <constraint firstItem="T2P-Gs-aSf" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="10" id="fwf-Xm-enQ"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="fLA-IO-UeZ" secondAttribute="trailing" constant="30" id="gYZ-Jj-RYZ"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="LRX-Rt-03D" secondAttribute="trailing" constant="81" id="k9D-oC-bTB"/>
@@ -64,7 +53,6 @@
                     </view>
                     <connections>
                         <outlet property="imageview" destination="T2P-Gs-aSf" id="iIB-g4-Nv2"/>
-                        <outlet property="tf" destination="sOG-KT-fO1" id="3l4-SE-nL1"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -78,6 +66,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="real_house.jpg" width="1440" height="749"/>
+        <image name="house.jpg" width="604" height="801"/>
     </resources>
 </document>

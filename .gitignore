@@ -6,3 +6,6 @@
 
 iOSInjectionProject/
 *.DS_Store
+*.xcuserstate
+*.xcuserstate
+*.xcbkptlist

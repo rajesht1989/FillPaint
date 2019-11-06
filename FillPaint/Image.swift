@@ -9,14 +9,14 @@
 import UIKit
 import CoreGraphics
 
- extension UIImage {
+extension UIImage {
     
     var width: Int {
         return Int(size.width)
     }
     var height: Int {
-         return Int(size.height)
-     }
+        return Int(size.height)
+    }
     
     /*
      tolerance varies from 4 * 255 * 255
@@ -45,8 +45,8 @@ import CoreGraphics
         let outputCGImage = context.makeImage()!
         let outputImage = UIImage(cgImage: outputCGImage, scale: self.scale, orientation: self.imageOrientation)
         return outputImage
-     }
- }
+    }
+}
 
 class ImageProcessor {
     let pixelBuffer: UnsafeMutablePointer<UInt32>
@@ -66,7 +66,7 @@ class ImageProcessor {
     subscript(index: Int) -> Pixel {
         get {
             let pixelIndex = pixelBuffer + index
-//             let pixelIndex = pixelBuffer
+            //             let pixelIndex = pixelBuffer
             return Pixel(memory: pixelIndex.pointee)
         }
         set(pixel) {
@@ -74,8 +74,8 @@ class ImageProcessor {
         }
     }
     
-    func floodFill(from point: (Int, Int), with: UIColor, tolerance: Int) {
-        let toColor = Pixel(color: with)
+    func floodFill(from point: (Int, Int), with color: UIColor, tolerance: Int) {
+        let toinfo = Pixel(color: color)
         let initialIndex = indexFor(point.0, point.1)
         let fromInfo = self[initialIndex]
         let processedIndices = NSMutableIndexSet()
@@ -95,37 +95,37 @@ class ImageProcessor {
             var minX = pointX
             var maxX = pointX + 1
             while minX >= 0 {
-                    let index = indexFor(minX, y)
-                    let pixelInfo = self[index]
-                    let diff = pixelInfo.diff(fromInfo)
-                    if diff > tolerance { break }
-                    self[index] = toColor
-                    minX -= 1
-                }
-                while maxX < width {
-                    let index = indexFor(maxX, y)
-                    let pixelInfo = self[index]
-                    let diff = pixelInfo.diff(fromInfo)
-                    if diff > tolerance { break }
-                    self[index] = toColor
-                    maxX += 1
-                }
-                for x in ((minX + 1)...(maxX - 1)) {
-                    if y < height - 1 {
-                        let index = indexFor(x, y + 1)
-                        if !processedIndices.contains(index) && self[index].diff(fromInfo) <= tolerance {
-                            indices.add(index)
-                        }
+                let index = indexFor(minX, y)
+                let pixelInfo = self[index]
+                let diff = pixelInfo.diff(fromInfo)
+                if diff > tolerance { break }
+                self[index] = toinfo.shifted(fromInfo, current: pixelInfo)
+                minX -= 1
+            }
+            while maxX < width {
+                let index = indexFor(maxX, y)
+                let pixelInfo = self[index]
+                let diff = pixelInfo.diff(fromInfo)
+                if diff > tolerance { break }
+                self[index] = toinfo.shifted(fromInfo, current: pixelInfo)
+                maxX += 1
+            }
+            for x in ((minX + 1)...(maxX - 1)) {
+                if y < height - 1 {
+                    let index = indexFor(x, y + 1)
+                    if !processedIndices.contains(index) && self[index].diff(fromInfo) <= tolerance {
+                        indices.add(index)
                     }
-                    if y > 0 {
-                        let index = indexFor(x, y - 1)
-                        if !processedIndices.contains(index) && self[index].diff(fromInfo) <= tolerance {
-                            indices.add(index)
-                        }
+                }
+                if y > 0 {
+                    let index = indexFor(x, y - 1)
+                    if !processedIndices.contains(index) && self[index].diff(fromInfo) <= tolerance {
+                        indices.add(index)
                     }
                 }
             }
         }
+    }
 }
 
 struct Pixel {
@@ -206,5 +206,33 @@ struct Pixel {
         let b = Int(Pixel.componentDiff(self.b, other.b))
         let a = Int(Pixel.componentDiff(self.a, other.a))
         return r*r + g*g + b*b + a*a
+    }
+    
+    func shiftedValue(_ toinfo: UInt8,  _ root: UInt8, _ current: UInt8) -> UInt8 {
+        var returnValue = toinfo
+        if current > root {
+            let diff = current - root
+            if Int(toinfo) + Int(diff) <= 255 {
+                returnValue = toinfo + diff
+            } else {
+                returnValue = 255
+            }
+        } else if root < current{
+            let diff = root - current
+            if toinfo > diff {
+                returnValue = toinfo - diff
+            } else {
+                returnValue = 0
+            }
+        }
+        return returnValue
+    }
+    
+    func shifted(_ root: Pixel, current: Pixel) -> Pixel {
+        let r = shiftedValue(self.r, root.r, current.r)
+        let g = shiftedValue(self.g, root.g, current.g)
+        let b = shiftedValue(self.b, root.b, current.b)
+        let a = shiftedValue(self.a, root.a, current.a)
+        return Pixel(r, g, b, a)
     }
 }
