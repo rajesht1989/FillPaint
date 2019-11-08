@@ -15,7 +15,7 @@
 		653AD4C8235D7F59004B58EA /* Wall1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 653AD4BC235D7F59004B58EA /* Wall1.jpg */; };
 		653AD4CA235D7F59004B58EA /* Wall7.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 653AD4BE235D7F59004B58EA /* Wall7.jpg */; };
 		925B559D236B00230032282E /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 925B559C236B00230032282E /* Image.swift */; };
-		9263B8D82372943E00552346 /* Wall.png in Resources */ = {isa = PBXBuildFile; fileRef = 9263B8D72372943E00552346 /* Wall.png */; };
+		9263B8D82372943E00552346 /* Wall5.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9263B8D72372943E00552346 /* Wall5.jpg */; };
 		9263B8DD237294FA00552346 /* house.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9263B8DB237294FA00552346 /* house.jpg */; };
 		9263B8DE237294FA00552346 /* real_house.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9263B8DC237294FA00552346 /* real_house.jpg */; };
 		928B7708235866CB009C1C53 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928B7707235866CB009C1C53 /* AppDelegate.swift */; };
@@ -35,7 +35,7 @@
 		653AD4BC235D7F59004B58EA /* Wall1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Wall1.jpg; sourceTree = "<group>"; };
 		653AD4BE235D7F59004B58EA /* Wall7.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Wall7.jpg; sourceTree = "<group>"; };
 		925B559C236B00230032282E /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
-		9263B8D72372943E00552346 /* Wall.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Wall.png; sourceTree = "<group>"; };
+		9263B8D72372943E00552346 /* Wall5.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Wall5.jpg; sourceTree = "<group>"; };
 		9263B8DB237294FA00552346 /* house.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = house.jpg; sourceTree = "<group>"; };
 		9263B8DC237294FA00552346 /* real_house.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = real_house.jpg; sourceTree = "<group>"; };
 		928B7704235866CB009C1C53 /* FillPaint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FillPaint.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -84,11 +84,11 @@
 				925B559C236B00230032282E /* Image.swift */,
 				9263B8DC237294FA00552346 /* real_house.jpg */,
 				9263B8DB237294FA00552346 /* house.jpg */,
-				9263B8D72372943E00552346 /* Wall.png */,
 				653AD4BC235D7F59004B58EA /* Wall1.jpg */,
 				653AD4B4235D7F58004B58EA /* Wall2.jpg */,
 				653AD4BB235D7F59004B58EA /* Wall3.jpg */,
 				653AD4B5235D7F58004B58EA /* Wall4.jpg */,
+				9263B8D72372943E00552346 /* Wall5.jpg */,
 				653AD4B9235D7F59004B58EA /* Wall6.jpg */,
 				653AD4BE235D7F59004B58EA /* Wall7.jpg */,
 				653AD4B8235D7F59004B58EA /* Wall8.jpg */,
@@ -169,7 +169,7 @@
 				653AD4C1235D7F59004B58EA /* Wall4.jpg in Resources */,
 				928B7714235866CD009C1C53 /* LaunchScreen.storyboard in Resources */,
 				928B7711235866CD009C1C53 /* Assets.xcassets in Resources */,
-				9263B8D82372943E00552346 /* Wall.png in Resources */,
+				9263B8D82372943E00552346 /* Wall5.jpg in Resources */,
 				928B770F235866CB009C1C53 /* Main.storyboard in Resources */,
 				653AD4CA235D7F59004B58EA /* Wall7.jpg in Resources */,
 			);

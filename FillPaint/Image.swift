@@ -46,6 +46,16 @@ extension UIImage {
         let outputImage = UIImage(cgImage: outputCGImage, scale: self.scale, orientation: self.imageOrientation)
         return outputImage
     }
+    
+    func convertImageToDifferentColorScale(style: String) -> UIImage {
+        let currentFilter = CIFilter(name: style)
+        currentFilter!.setValue(CIImage(image: self), forKey: kCIInputImageKey)
+        let output = currentFilter!.outputImage
+        let context = CIContext(options: nil)
+        let cgimg = context.createCGImage(output!,from: output!.extent)
+        let processedImage = UIImage(cgImage: cgimg!)
+        return processedImage
+    }
 }
 
 class ImageProcessor {
@@ -99,7 +109,7 @@ class ImageProcessor {
                 let pixelInfo = self[index]
                 let diff = pixelInfo.diff(fromInfo)
                 if diff > tolerance { break }
-                self[index] = toinfo.shifted(fromInfo, current: pixelInfo)
+                self[index] = toinfo
                 minX -= 1
             }
             while maxX < width {
@@ -107,7 +117,7 @@ class ImageProcessor {
                 let pixelInfo = self[index]
                 let diff = pixelInfo.diff(fromInfo)
                 if diff > tolerance { break }
-                self[index] = toinfo.shifted(fromInfo, current: pixelInfo)
+                self[index] = toinfo
                 maxX += 1
             }
             for x in ((minX + 1)...(maxX - 1)) {
@@ -207,7 +217,7 @@ struct Pixel {
         let a = Int(Pixel.componentDiff(self.a, other.a))
         return r*r + g*g + b*b + a*a
     }
-    
+    /*
     func shiftedValue(_ toinfo: UInt8,  _ root: UInt8, _ current: UInt8) -> UInt8 {
         var returnValue = toinfo
         if current > root {
@@ -229,10 +239,15 @@ struct Pixel {
     }
     
     func shifted(_ root: Pixel, current: Pixel) -> Pixel {
+//        var hue: CGFloat = 0.0, saturation: CGFloat = 0.0, brightness: CGFloat = 0.0, alpha: CGFloat = 0.0
+//        current.color.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+//        let newColor = UIColor(hue: 0.67, saturation: 1 - saturation, brightness: brightness, alpha: alpha)
+//        return Pixel(color: newColor)
         let r = shiftedValue(self.r, root.r, current.r)
         let g = shiftedValue(self.g, root.g, current.g)
         let b = shiftedValue(self.b, root.b, current.b)
         let a = shiftedValue(self.a, root.a, current.a)
         return Pixel(r, g, b, a)
     }
+ */
 }
