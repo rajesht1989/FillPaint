@@ -11,18 +11,11 @@ import CoreGraphics
 
 extension UIImage {
     
-    var width: Int {
-        return Int(size.width)
-    }
-    var height: Int {
-        return Int(size.height)
-    }
-    
     /*
      tolerance varies from 4 * 255 * 255
      */
-    func processPixels(from point: (Int, Int), color: UIColor, tolerance: Int) -> UIImage {
-        guard let coreImage = self.cgImage else {
+    func processPixels(from point: (Int, Int), color: UIColor = .red, pattern: UIImage? = nil, tolerance: Int) -> UIImage {
+        guard let coreImage = self.lineOverlayImage().cgImage else {
             return self
         }
         let bytesPerPixel    = 4
@@ -42,19 +35,65 @@ extension UIImage {
         let pixelBuffer = buffer.assumingMemoryBound(to: UInt32.self)
         let processor = ImageProcessor(buffer: pixelBuffer, dataSize: (width, height))
         processor.floodFill(from: point, with: color, tolerance: tolerance)
-        let outputCGImage = context.makeImage()!
-        let outputImage = UIImage(cgImage: outputCGImage, scale: self.scale, orientation: self.imageOrientation)
-        return outputImage
+        
+        guard let outputCGImage = context.makeImage() else {
+            return self
+        }
+        return filteredImage(cgImage: outputCGImage, color: color, pattern: pattern)
     }
     
-    func convertImageToDifferentColorScale(style: String) -> UIImage {
-        let currentFilter = CIFilter(name: style)
-        currentFilter!.setValue(CIImage(image: self), forKey: kCIInputImageKey)
-        let output = currentFilter!.outputImage
-        let context = CIContext(options: nil)
-        let cgimg = context.createCGImage(output!,from: output!.extent)
-        let processedImage = UIImage(cgImage: cgimg!)
+    func lineOverlayImage() -> UIImage {
+        var processedImage = self
+        if let currentFilter = CIFilter(name: "CILineOverlay") {
+            currentFilter.setValue(CIImage(image: self), forKey: kCIInputImageKey)
+            if let output = currentFilter.outputImage {
+                let context = CIContext(options: nil)
+                if let cgimage = context.createCGImage(output,from: output.extent) {
+                    processedImage = UIImage(cgImage: cgimage)
+                }
+            }
+        }
         return processedImage
+    }
+    
+    func filteredImage(cgImage: CGImage, color: UIColor, pattern: UIImage? = nil) -> UIImage {
+        if let matrixFilter = CIFilter(name: "CIColorMatrix") {
+            matrixFilter.setDefaults()
+            matrixFilter.setValue(CIImage(cgImage: cgImage), forKey: kCIInputImageKey)
+            let rgbVector = CIVector(x: 0, y: 0, z: 0, w: 0)
+            let aVector = CIVector(x: 1, y: 1, z: 1, w: 0)
+            matrixFilter.setValue(rgbVector, forKey: "inputRVector")
+            matrixFilter.setValue(rgbVector, forKey: "inputGVector")
+            matrixFilter.setValue(rgbVector, forKey: "inputBVector")
+            matrixFilter.setValue(aVector, forKey: "inputAVector")
+            if pattern == nil {
+              let pixel = Pixel(color: color)
+                matrixFilter.setValue(CIVector(x: CGFloat(pixel.r/255), y: CGFloat(pixel.g/255), z: CGFloat(pixel.b/255), w: 0), forKey: "inputBiasVector")
+            }
+            
+            if let matrixOutput = matrixFilter.outputImage {
+                if let cgPattern = pattern?.resizeImage(targetSize: size).cgImage, let blendFilter = CIFilter(name: "CIBlendWithAlphaMask") {
+                    blendFilter.setDefaults()
+                    blendFilter.setValue(matrixOutput, forKey: kCIInputMaskImageKey)
+                    blendFilter.setValue(CIImage(cgImage:cgPattern, options: nil), forKey: kCIInputImageKey)
+                    if let blendOutput = blendFilter.outputImage, let cgImage = CIContext().createCGImage(blendOutput, from: blendOutput.extent) {
+                        return UIImage(cgImage: cgImage)
+                    }
+                } else if let cgImage = CIContext().createCGImage(matrixOutput, from: matrixOutput.extent) {
+                    return UIImage(cgImage: cgImage)
+                }
+            }
+        }
+        return self
+    }
+    
+    func resizeImage(targetSize: CGSize) -> UIImage {
+        let rect = CGRect(x: 0, y: 0, width: targetSize.width, height: targetSize.height)
+        UIGraphicsBeginImageContextWithOptions(rect.size, false, 1.0)
+        self.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage!
     }
 }
 
@@ -76,7 +115,6 @@ class ImageProcessor {
     subscript(index: Int) -> Pixel {
         get {
             let pixelIndex = pixelBuffer + index
-            //             let pixelIndex = pixelBuffer
             return Pixel(memory: pixelIndex.pointee)
         }
         set(pixel) {

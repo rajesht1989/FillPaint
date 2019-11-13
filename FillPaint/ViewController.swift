@@ -18,7 +18,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        imageview.image = UIImage(named: "Wall1.jpg")
+        imageview.image = UIImage(named: "Wall7.jpg")
         image = imageview.image
     }
 
@@ -32,20 +32,12 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
             point = CGPoint(x: point.x - imageRect.origin.x, y: point.y - imageRect.origin.y)
             let imageTouchPoint = CGPoint(x: point.x * image.size.width/imageRect.size.width , y: point.y * image.size.height/imageRect.size.height)
             touchpointonImage = imageTouchPoint
-            let image = self.imageview.image!.convertImageToDifferentColorScale(style: "CILineOverlay").processPixels(from: (Int(imageTouchPoint.x), Int(imageTouchPoint.y)), color: .blue, tolerance: 1000)
+            let image = self.imageview.image!.processPixels(from: (Int(imageTouchPoint.x), Int(imageTouchPoint.y)), color: .systemTeal, pattern: UIImage(named: "Pattern.jpg"), tolerance: 1000)
             let imageLayer = CALayer()
             imageLayer.frame = imageRect
             imageLayer.contents = image.cgImage
             self.imageview.layer.addSublayer(imageLayer)
-            imageLayer.opacity = 0.3
-            
-        }
-    }
-    
-    @IBAction func toleranceValueChanged(_ slider: UISlider) {
-        if let point = touchpointonImage {
-            let image = self.image?.processPixels(from: (Int(point.x), Int(point.y)), color: .green, tolerance: Int(slider.value))
-            imageview.image = image
+            imageLayer.opacity = 0.5
             print("Done")
         }
     }
