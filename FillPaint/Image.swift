@@ -255,37 +255,4 @@ struct Pixel {
         let a = Int(Pixel.componentDiff(self.a, other.a))
         return r*r + g*g + b*b + a*a
     }
-    /*
-    func shiftedValue(_ toinfo: UInt8,  _ root: UInt8, _ current: UInt8) -> UInt8 {
-        var returnValue = toinfo
-        if current > root {
-            let diff = current - root
-            if Int(toinfo) + Int(diff) <= 255 {
-                returnValue = toinfo + diff
-            } else {
-                returnValue = 255
-            }
-        } else if root < current{
-            let diff = root - current
-            if toinfo > diff {
-                returnValue = toinfo - diff
-            } else {
-                returnValue = 0
-            }
-        }
-        return returnValue
-    }
-    
-    func shifted(_ root: Pixel, current: Pixel) -> Pixel {
-//        var hue: CGFloat = 0.0, saturation: CGFloat = 0.0, brightness: CGFloat = 0.0, alpha: CGFloat = 0.0
-//        current.color.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
-//        let newColor = UIColor(hue: 0.67, saturation: 1 - saturation, brightness: brightness, alpha: alpha)
-//        return Pixel(color: newColor)
-        let r = shiftedValue(self.r, root.r, current.r)
-        let g = shiftedValue(self.g, root.g, current.g)
-        let b = shiftedValue(self.b, root.b, current.b)
-        let a = shiftedValue(self.a, root.a, current.a)
-        return Pixel(r, g, b, a)
-    }
- */
 }
