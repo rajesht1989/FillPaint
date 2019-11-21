@@ -10,18 +10,16 @@ import UIKit
 import CoreImage
 
 class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIPopoverControllerDelegate{
-
-    var touchpointonImage: CGPoint?
     
     @IBOutlet weak var imageview: UIImageView!
     var image: UIImage?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        imageview.image = UIImage(named: "Wall7.jpg")
+        //        imageview.image = UIImage(named: "Wall7.jpg")
         image = imageview.image
     }
-
+    
     @IBAction func tapAction(_ gestureRecognizer: UITapGestureRecognizer) {
         guard let image = imageview.image else {
             return
@@ -30,9 +28,29 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate,UINavigat
         let imageRect = imageview.contentClippingRect
         if imageRect.contains(point) {
             point = CGPoint(x: point.x - imageRect.origin.x, y: point.y - imageRect.origin.y)
-            let imageTouchPoint = CGPoint(x: point.x * image.size.width/imageRect.size.width , y: point.y * image.size.height/imageRect.size.height)
-            touchpointonImage = imageTouchPoint
-            let image = self.imageview.image!.processPixels(from: (Int(imageTouchPoint.x), Int(imageTouchPoint.y)), color: .systemTeal, pattern: UIImage(named: "Pattern.jpg"), tolerance: 1000)
+            let imageTouchPoint: (Int, Int) = (Int(point.x * image.size.width/imageRect.size.width) , Int(point.y * image.size.height/imageRect.size.height))
+            var toBeRemoved = [CALayer]()
+            for layer in imageview.layer.sublayers ?? [] {
+                let content = layer.contents as! CGImage
+                if content.pointHasData(point: imageTouchPoint) {
+                    toBeRemoved.append(layer)
+                }
+            }
+            
+            for layer in toBeRemoved {
+                layer.removeFromSuperlayer()
+            }
+            
+            var image: UIImage!
+            switch Int.random(in: Range(uncheckedBounds: (0, 4))) {
+            case 0:
+                image = imageview.image!.processPixels(from: imageTouchPoint, color: .systemBlue, tolerance: 10)
+            case 1:
+                image = imageview.image!.processPixels(from: imageTouchPoint, color: .systemRed, tolerance: 10)
+            default:
+                image = self.imageview.image!.processPixels(from: imageTouchPoint, color: .systemBlue, pattern: UIImage(named: "Pattern.jpg"), tolerance: 100)
+            }
+            
             let imageLayer = CALayer()
             imageLayer.frame = imageRect
             imageLayer.contents = image.cgImage

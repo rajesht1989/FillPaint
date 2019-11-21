@@ -256,3 +256,20 @@ struct Pixel {
         return r*r + g*g + b*b + a*a
     }
 }
+
+extension CGImage {
+    func pixelInfo(point: (Int, Int)) -> [CGFloat] {
+        print(self)
+        let bytesPerPixel    = 4
+        let pixelData = dataProvider!.data
+        let data: UnsafePointer<UInt8> = CFDataGetBytePtr(pixelData)
+        let pixelIndex: Int = Int(width * point.1 + point.0) * bytesPerPixel
+        return Array(0 ... 3).map { CGFloat(data[pixelIndex + $0]) / CGFloat(255) }
+    }
+    
+    func pointHasData(point: (Int, Int)) -> Bool {
+        let pxinfo = pixelInfo(point: point)
+        return pxinfo[3] > 0
+    }
+    
+}
