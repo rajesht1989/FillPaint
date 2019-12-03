@@ -60,27 +60,41 @@ extension UIImage {
         if let matrixFilter = CIFilter(name: "CIColorMatrix") {
             matrixFilter.setDefaults()
             matrixFilter.setValue(CIImage(cgImage: cgImage), forKey: kCIInputImageKey)
-            let rgbVector = CIVector(x: 0, y: 0, z: 0, w: 0)
-            let aVector = CIVector(x: 1, y: 1, z: 1, w: 0)
-            matrixFilter.setValue(rgbVector, forKey: "inputRVector")
-            matrixFilter.setValue(rgbVector, forKey: "inputGVector")
-            matrixFilter.setValue(rgbVector, forKey: "inputBVector")
-            matrixFilter.setValue(aVector, forKey: "inputAVector")
-            if pattern == nil {
-              let pixel = Pixel(color: color)
-                matrixFilter.setValue(CIVector(x: CGFloat(pixel.r/255), y: CGFloat(pixel.g/255), z: CGFloat(pixel.b/255), w: 0), forKey: "inputBiasVector")
-            }
             
-            if let matrixOutput = matrixFilter.outputImage {
-                if let cgPattern = pattern?.resizeImage(targetSize: size).cgImage, let blendFilter = CIFilter(name: "CIBlendWithAlphaMask") {
-                    blendFilter.setDefaults()
-                    blendFilter.setValue(matrixOutput, forKey: kCIInputMaskImageKey)
-                    blendFilter.setValue(CIImage(cgImage:cgPattern, options: nil), forKey: kCIInputImageKey)
-                    if let blendOutput = blendFilter.outputImage, let cgImage = CIContext().createCGImage(blendOutput, from: blendOutput.extent) {
+            if let pattern = pattern {
+                let rgbVector = CIVector(x: 0, y: 0, z: 0, w: 0)
+                let aVector = CIVector(x: 1, y: 1, z: 1, w: 0)
+                matrixFilter.setValue(rgbVector, forKey: "inputRVector")
+                matrixFilter.setValue(rgbVector, forKey: "inputGVector")
+                matrixFilter.setValue(rgbVector, forKey: "inputBVector")
+                matrixFilter.setValue(aVector, forKey: "inputAVector")
+                
+                if let matrixOutput = matrixFilter.outputImage {
+                    if let cgPattern = pattern.resizeImage(targetSize: size).cgImage, let blendFilter = CIFilter(name: "CIBlendWithAlphaMask") {
+                        blendFilter.setDefaults()
+                        blendFilter.setValue(matrixOutput, forKey: kCIInputMaskImageKey)
+                        blendFilter.setValue(CIImage(cgImage:cgPattern, options: nil), forKey: kCIInputImageKey)
+                        if let blendOutput = blendFilter.outputImage, let cgImage = CIContext().createCGImage(blendOutput, from: blendOutput.extent) {
+                            return UIImage(cgImage: cgImage)
+                        }
+                    } else if let cgImage = CIContext().createCGImage(matrixOutput, from: matrixOutput.extent) {
                         return UIImage(cgImage: cgImage)
                     }
-                } else if let cgImage = CIContext().createCGImage(matrixOutput, from: matrixOutput.extent) {
-                    return UIImage(cgImage: cgImage)
+                }
+            } else {
+                let pixel = Pixel(color: color)
+                let rgbvalue = (CGFloat(pixel.r)/255, CGFloat(pixel.g)/255.0, CGFloat(pixel.b)/255.0)
+                let aVector = CIVector(x: 1, y: 1, z: 1, w: 0)
+                matrixFilter.setValue(CIVector(x: rgbvalue.0, y: 0, z: 0, w: 0), forKey: "inputRVector")
+                matrixFilter.setValue(CIVector(x: 0, y: rgbvalue.1, z: 0, w: 0), forKey: "inputGVector")
+                matrixFilter.setValue(CIVector(x: 0, y: 0, z: rgbvalue.2, w: 0), forKey: "inputBVector")
+                matrixFilter.setValue(aVector, forKey: "inputAVector")
+                matrixFilter.setValue(CIVector(x: CGFloat(pixel.r)/255, y: CGFloat(pixel.g)/255, z: CGFloat(pixel.b)/255, w: 0), forKey: "inputBiasVector")
+                
+                if let matrixOutput = matrixFilter.outputImage {
+                    if let cgImage = CIContext().createCGImage(matrixOutput, from: matrixOutput.extent) {
+                        return UIImage(cgImage: cgImage)
+                    }
                 }
             }
         }
