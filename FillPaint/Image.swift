@@ -15,7 +15,7 @@ extension UIImage {
      tolerance varies from 4 * 255 * 255
      */
     func processPixels(from point: (Int, Int), color: UIColor = .red, pattern: UIImage? = nil, tolerance: Int) -> UIImage {
-        guard let coreImage = self.lineOverlayImage().cgImage else {
+        guard let coreImage = self.lineOverlayImage() else {
             return self
         }
         let bytesPerPixel    = 4
@@ -28,32 +28,50 @@ extension UIImage {
         guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo) else {
             return self
         }
-        context.draw(coreImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+        guard let cgImage = UIImage().resizeImage(targetSize: CGSize(width: size.width, height: size.height)).cgImage else {
+            return self
+        }
+        
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
         guard let buffer = context.data else {
             return self
         }
-        let pixelBuffer = buffer.assumingMemoryBound(to: UInt32.self)
-        let processor = ImageProcessor(buffer: pixelBuffer, dataSize: (width, height))
+        let outputBuffer = buffer.assumingMemoryBound(to: UInt32.self)
+        
+        guard let inputContext = CGContext(data: nil, width: width, height: height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo) else {
+            return self
+        }
+        inputContext.draw(coreImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+        guard let inputData = inputContext.data else {
+            return self
+        }
+        let inputBuffer = inputData.assumingMemoryBound(to: UInt32.self)
+        
+        let processor = ImageProcessor(inputBuffer: inputBuffer, outputBufferl: outputBuffer, dataSize: (width, height))
         processor.floodFill(from: point, with: color, tolerance: tolerance)
         
         guard let outputCGImage = context.makeImage() else {
             return self
         }
-        return filteredImage(cgImage: outputCGImage, color: color, pattern: pattern)
+        
+        if let _ = pattern {
+            return filteredImage(cgImage: outputCGImage, color: color, pattern: pattern)
+        } else {
+            return UIImage(cgImage: outputCGImage)
+        }
+        
     }
     
-    func lineOverlayImage() -> UIImage {
-        var processedImage = self
+    func lineOverlayImage() -> CGImage? {
+        var cgImage: CGImage?
         if let currentFilter = CIFilter(name: "CILineOverlay") {
             currentFilter.setValue(CIImage(image: self), forKey: kCIInputImageKey)
             if let output = currentFilter.outputImage {
                 let context = CIContext(options: nil)
-                if let cgimage = context.createCGImage(output,from: output.extent) {
-                    processedImage = UIImage(cgImage: cgimage)
-                }
+                cgImage = context.createCGImage(output,from: output.extent)
             }
         }
-        return processedImage
+        return cgImage
     }
     
     func filteredImage(cgImage: CGImage, color: UIColor, pattern: UIImage? = nil) -> UIImage {
@@ -113,11 +131,13 @@ extension UIImage {
 
 class ImageProcessor {
     let pixelBuffer: UnsafeMutablePointer<UInt32>
+    let outputBuffer: UnsafeMutablePointer<UInt32>
     let width: Int
     let height: Int
     
-    init(buffer: UnsafeMutablePointer<UInt32>, dataSize: (Int,Int) ) {
-        pixelBuffer = buffer
+    init(inputBuffer: UnsafeMutablePointer<UInt32>, outputBufferl: UnsafeMutablePointer<UInt32>, dataSize: (Int,Int) ) {
+        pixelBuffer = inputBuffer
+        outputBuffer = outputBufferl
         width = dataSize.0
         height = dataSize.1
     }
@@ -133,6 +153,7 @@ class ImageProcessor {
         }
         set(pixel) {
             self.pixelBuffer[index] = pixel.uInt32Value
+            self.outputBuffer[index] = pixel.uInt32Value
         }
     }
     
